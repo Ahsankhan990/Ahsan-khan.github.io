@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahsan Khan — Python & Flask Developer </title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --black: #0a0a0a;
+  --white: #ffffff;
+  --grey-100: #f5f5f5;
+  --grey-200: #e8e8e8;
+  --grey-400: #aaaaaa;
+  --grey-600: #666666;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--white);
+  color: var(--black);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  cursor: none;
+}
+
+/* CURSOR */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--black);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease;
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid var(--black);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.12s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s;
+  transform: translate(-50%, -50%);
+  opacity: 0.4;
+}
+.cursor.hover { width: 14px; height: 14px; }
+.cursor-ring.hover { width: 48px; height: 48px; opacity: 0.15; }
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--grey-200);
+  padding: 0 40px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--black);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  color: var(--grey-600);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1px;
+  background: var(--black);
+  transition: width 0.2s ease;
+}
+.nav-links a:hover { color: var(--black); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--black); }
+.nav-links a.active::after { width: 100%; }
+.nav-hire {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--white) !important;
+  background: var(--black);
+  padding: 7px 16px;
+  border-radius: 4px;
+  transition: opacity 0.15s !important;
+}
+.nav-hire:hover { opacity: 0.7; }
+.nav-hire::after { display: none !important; }
+
+/* CONTAINER */
+.container { max-width: 780px; margin: 0 auto; padding: 0 28px; }
+
+/* HERO */
+.hero { padding: 140px 0 100px; border-bottom: 1px solid var(--grey-200); }
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--grey-600);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease 0.1s forwards;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 1px;
+  background: var(--grey-400);
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+.hero h1 {
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -2px;
+  color: var(--black);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.2s forwards;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--grey-400);
+}
+.hero-desc {
+  font-size: 1rem;
+  color: var(--grey-600);
+  line-height: 1.8;
+  max-width: 480px;
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.3s forwards;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.4s forwards;
+}
+.btn-solid {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--black); color: var(--white);
+  padding: 11px 22px; border-radius: 4px;
+  font-size: 13px; font-weight: 500;
+  text-decoration: none; font-family: var(--mono);
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s, transform 0.15s;
+  border: none; cursor: none;
+}
+.btn-solid:hover { opacity: 0.75; transform: translateY(-1px); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--black);
+  padding: 10px 22px; border-radius: 4px;
+  border: 1px solid var(--grey-200);
+  font-size: 13px; font-weight: 400;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+  cursor: none;
+}
+.btn-outline:hover { border-color: var(--black); transform: translateY(-1px); }
+.hero-meta {
+  display: flex; gap: 2.5rem; flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.5s forwards;
+}
+.meta-item { display: flex; flex-direction: column; gap: 3px; }
+.meta-label {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-400);
+}
+.meta-value { font-size: 14px; font-weight: 500; }
+
+/* SECTIONS */
+section { padding: 80px 0; border-bottom: 1px solid var(--grey-200); }
+.section-header {
+  display: flex; align-items: baseline;
+  gap: 16px; margin-bottom: 48px;
+}
+.section-num { font-family: var(--mono); font-size: 11px; color: var(--grey-400); }
+.section-title { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px; }
+
+/* ABOUT */
+.about-text {
+  font-size: 1rem; color: var(--grey-600);
+  line-height: 1.85; font-weight: 300;
+  max-width: 600px; margin-bottom: 1.5rem;
+}
+.about-text strong { color: var(--black); font-weight: 500; }
+.skills-block { margin-top: 2.5rem; }
+.skills-group { margin-bottom: 20px; }
+.skills-label {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--grey-400); margin-bottom: 10px;
+}
+.skills-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.skill {
+  font-family: var(--mono); font-size: 12px;
+  padding: 5px 12px;
+  border: 1px solid var(--grey-200); border-radius: 3px;
+  color: var(--grey-600); background: var(--grey-100);
+  transition: all 0.15s; cursor: none;
+}
+.skill:hover { border-color: var(--black); color: var(--black); background: var(--white); transform: translateY(-1px); }
+
+/* PROJECTS */
+.projects-list { display: flex; flex-direction: column; }
+.project-item {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 2rem; padding: 32px 0;
+  border-top: 1px solid var(--grey-200);
+  transition: background 0.2s;
+}
+.project-item:last-child { border-bottom: 1px solid var(--grey-200); }
+.project-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.ptag {
+  font-family: var(--mono); font-size: 10px;
+  padding: 3px 8px; border-radius: 2px;
+  letter-spacing: 0.06em; font-weight: 500;
+  background: var(--grey-100); color: #444;
+}
+.project-name {
+  font-size: 1.05rem; font-weight: 600;
+  letter-spacing: -0.3px; margin-bottom: 8px;
+}
+.project-desc {
+  font-size: 14px; color: var(--grey-600);
+  line-height: 1.7; font-weight: 300;
+  max-width: 480px; margin-bottom: 14px;
+}
+.project-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+.tech { font-family: var(--mono); font-size: 11px; color: var(--grey-400); }
+.tech:not(:last-child)::after { content: '·'; margin-left: 6px; }
+.project-right {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 10px; padding-top: 4px;
+}
+.project-link {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--black); text-decoration: none;
+  display: flex; align-items: center; gap: 5px;
+  border-bottom: 1px solid var(--grey-200); padding-bottom: 1px;
+  transition: border-color 0.15s; white-space: nowrap; cursor: none;
+}
+.project-link:hover { border-color: var(--black); }
+.project-link svg { width: 11px; height: 11px; }
+.wip-badge {
+  font-family: var(--mono); font-size: 10px;
+  background: var(--black); color: var(--white);
+  padding: 3px 8px; border-radius: 2px; letter-spacing: 0.05em;
+}
+
+/* EDUCATION */
+.edu-list { display: flex; flex-direction: column; }
+.edu-item {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 2rem; padding: 28px 0;
+  border-top: 1px solid var(--grey-200);
+}
+.edu-item:last-child { border-bottom: 1px solid var(--grey-200); }
+.edu-date { font-family: var(--mono); font-size: 12px; color: var(--grey-400); padding-top: 3px; }
+.edu-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; margin-bottom: 4px; }
+.edu-org { font-size: 13px; color: var(--grey-600); margin-bottom: 6px; }
+.edu-desc { font-size: 13px; color: var(--grey-400); line-height: 1.6; font-weight: 300; }
+
+/* CONTACT */
+.contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: start; }
+.contact-intro { font-size: 1rem; color: var(--grey-600); line-height: 1.8; font-weight: 300; margin-bottom: 2rem; }
+.contact-intro strong { color: var(--black); font-weight: 500; }
+.contact-links { display: flex; flex-direction: column; gap: 14px; }
+.contact-link {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: var(--black);
+  font-size: 14px; transition: opacity 0.15s; cursor: none;
+}
+.contact-link:hover { opacity: 0.55; }
+.cl-icon {
+  width: 36px; height: 36px;
+  border: 1px solid var(--grey-200); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: border-color 0.15s;
+}
+.contact-link:hover .cl-icon { border-color: var(--black); }
+.cl-icon svg { width: 15px; height: 15px; }
+.cl-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--grey-400); }
+.cl-value { font-size: 13px; font-weight: 500; }
+.contact-form { display: flex; flex-direction: column; gap: 14px; }
+.form-field { display: flex; flex-direction: column; gap: 5px; }
+.form-field label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-400); }
+.form-field input, .form-field textarea {
+  background: var(--grey-100); border: 1px solid var(--grey-200);
+  border-radius: 4px; padding: 10px 14px;
+  font-family: var(--sans); font-size: 14px; color: var(--black);
+  outline: none; transition: border-color 0.15s, background 0.15s; resize: none; cursor: none;
+}
+.form-field input:focus, .form-field textarea:focus { border-color: var(--black); background: var(--white); }
+.form-field input::placeholder, .form-field textarea::placeholder { color: var(--grey-400); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* FOOTER */
+footer {
+  padding: 32px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--grey-200);
+}
+.footer-name { font-family: var(--mono); font-size: 12px; color: var(--grey-400); }
+.footer-copy { font-size: 12px; color: var(--grey-400); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.fade.visible { opacity: 1; transform: none; }
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .container { padding: 0 20px; }
+  .hero { padding: 100px 0 60px; }
+  .project-item { grid-template-columns: 1fr; }
+  .project-right { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
+  .edu-item { grid-template-columns: 1fr; gap: 4px; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  body { cursor: auto; }
+  .cursor, .cursor-ring { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Portfolio</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact" class="nav-hire">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow"><span class="status-dot"></span> Open to work — Karachi, Pakistan</div>
+    <h1>Ahsan Khan.<br><em>Python & Flask</em><br><em>Developer.</em></h1>
+    <p class="hero-desc">Final year BSCS student focused on developing real-world Python applications, including AI-based systems, web backends, and scalable software solutions. 
+    <div class="hero-actions">
+      <a href="#projects" class="btn-solid">View Projects</a>
+      <a href="https://github.com/Ahsankhan990" target="_blank" class="btn-outline">GitHub</a>
+      <a href="#contact" class="btn-outline">Contact Me</a>
+    </div>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">Degree</span>
+        <span class="meta-value">BSCS — 7th Semester</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Projects</span>
+        <span class="meta-value">3 Completed</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Stack</span>
+        <span class="meta-value">Python · Flask · AI</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header fade">
+      <span class="section-num">01</span>
+      <h2 class="section-title">About</h2>
+    </div>
+    <p class="about-text fade">
+  I'm <strong>Ahsan Khan</strong>, a Computer Science student based in Karachi who enjoys building practical software that solves real-world problems.
+</p>
+
+<p class="about-text fade">
+  My focus is on <strong>Python backend development</strong> with interest in AI and computer vision. I have built projects such as a face recognition-based attendance system using OpenCV, a full e-commerce platform using Flask, and a learning management system from scratch. I am continuously improving my skills through hands-on development.
+</p>
+    <div class="skills-block">
+      <div class="skills-group fade">
+        <div class="skills-label">Languages</div>
+        <div class="skills-row">
+          <span class="skill">Python</span>
+          <span class="skill">SQL</span>
+          <span class="skill">C#</span>
+          <span class="skill">HTML / CSS</span>
+        </div>
+      </div>
+      <div class="skills-group fade">
+        <div class="skills-label">Web Development & Backend</div>
+        <div class="skills-row">
+          <span class="skill">Flask</span>
+          <span class="skill">Rest APIs</span>
+          <span class="skill">MVC</span>
+          <span class="skill">Entity Framework</span>
+          <span class="skill">OOP</span>
+          </div>
+      </div>
+
+
+      <div class="skills-group fade">
+        <div class="skills-label">Tools & Databases</div>
+        <div class="skills-row">
+          <span class="skill">MySQL</span>
+          <span class="skill">SQL Server</span>
+          <span class="skill">Git / GitHub</span>
+         
+        </div>
+      </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-header fade">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Projects</h2>
+    </div>
+    <div class="projects-list">
+      
+      <div class="project-item fade">
+        <div class="project-left">
+          <div class="project-tags">
+            <span class="ptag">Full-Stack</span>
+            <span class="ptag">E-Commerce</span>
+          </div>
+          <div class="project-name">E-Commerce Platform</div>
+          <p class="project-desc">Complete online store with product listings, shopping cart, checkout with Cash on Delivery, order management, and admin panel. Built with Flask blueprint architecture, SQLAlchemy ORM, and role-based access control.</p>
+          <div class="project-tech">
+            <span class="tech">Flask</span>
+            <span class="tech">SQLAlchemy</span>
+            <span class="tech">MySQL</span>
+            <span class="tech">Flask-Login</span>
+            <span class="tech">Jinja2</span>
+          </div>
+        </div>
+        <div class="project-right">
+          <a href="https://github.com/Ahsankhan990/Ecommerce" target="_blank" class="project-link">
+            GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+
+      <div class="project-item fade">
+        <div class="project-left">
+          <div class="project-tags">
+            <span class="ptag">AI · Computer Vision</span>
+            <span class="ptag">Full-Stack</span>
+          </div>
+          <div class="project-name">Face Recognition Attendance System</div>
+          <p class="project-desc">An AI-based automated attendance system that uses real-time face recognition to replace manual roll calls. The system captures and processes live camera input to automatically mark attendance and store records in a structured format for reporting and export.</p>
+          <div class="project-tech">
+            <span class="tech">Python</span>
+            <span class="tech">OpenCV</span>
+            <span class="tech">face_recognition</span>
+  
+          </div>
+        </div>
+        <div class="project-right">
+          <a href="https://github.com/Ahsankhan990" target="_blank" class="project-link">
+            GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+
+      <div class="project-item fade">
+        <div class="project-left">
+          <div class="project-tags">
+            <span class="ptag">Education</span>
+          </div>
+          <div class="project-name">Learning Management System</div>
+          <p class="project-desc">A desktop-based Learning Management System built using Python and Tkinter. The system provides separate interfaces for admin and students, allowing course management and enrollment with database integration.</p>
+          <div class="project-tech">
+            <span class="tech">Python</span>
+            <span class="tech">MySQL</span>
+            <span class="tech">Tkinter</span>
+            <span class="tech">Pyodbc</span>
+            <span class="tech">Openpyxl</span>
+
+          </div>
+        </div>
+        <div class="project-right">
+          <a href="https://github.com/Ahsankhan990" target="_blank" class="project-link">
+            GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-header fade">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Education</h2>
+    </div>
+    <div class="edu-list">
+      <div class="edu-item fade">
+        <div class="edu-date">2024 — Present</div>
+        <div>
+          <div class="edu-title">Bachelor of Science in Computer Science</div>
+          <div class="edu-org"> Millennium Institute of Technology and Entrepreneurship — Karachi, Pakistan</div>
+          <div class="edu-desc"> Currently in 7th semester, focusing on software development, web technologies, and machine learning. CGPA: 3.4</div>
+        </div>
+      </div>
+      <div class="edu-item fade">
+        <div class="edu-date">2025</div>
+        <div>
+          <div class="edu-title">Computer Vision & AI </div>
+          <div class="edu-desc">Learned OpenCV and face_recognition library to build a real attendance system. Explored basic AI/ML concepts through practical projects.</div>
+        </div>
+      </div>
+      <div class="edu-item fade">
+        <div class="edu-date">2025</div>
+        <div>
+          <div class="edu-title">Python Web Development</div>
+          <div class="edu-desc">Built 3 complete full-stack projects using Flask, SQLAlchemy, and MySQL. Learned blueprint architecture, authentication, and REST APIs.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header fade">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Contact</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="fade">
+        <p class="contact-intro">
+          I'm a <strong>final year CS student</strong> based in Karachi, Pakistan. Feel free to reach out if you want to discuss a project, opportunity, or just connect.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:ahsankhan@email.com" class="contact-link">
+            <div class="cl-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="cl-label">Email</div>
+              <div class="cl-value">ahsancyber1010@email.com</div>
+            </div>
+          </a>
+          <a href="https://github.com/Ahsankhan990" target="_blank" class="contact-link">
+            <div class="cl-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            </div>
+            <div>
+              <div class="cl-label">GitHub</div>
+              <div class="cl-value">github.com/Ahsankhan990</div>
+            </div>
+          </a>
+       <a href="https://www.linkedin.com/in/ahsan-khan-0bb776270" target="_blank" class="contact-link">
+  <div class="cl-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+      <rect x="2" y="9" width="4" height="12"/>
+      <circle cx="4" cy="4" r="2"/>
+    </svg>
+  </div>
+  <div>
+    <div class="cl-label">LinkedIn</div>
+    <div class="cl-value">linkedin.com/in/ahsan-khan-0bb776270</div>
+  </div>
+</a>
+          <div class="contact-link">
+            <div class="cl-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="cl-label">Location</div>
+              <div class="cl-value">Karachi, Pakistan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fade">
+       <form class="contact-form" action="https://formspree.io/f/xgobnevn" method="POST">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Name</label>
+              <input type="text" name="name" placeholder="name" required>
+            </div>
+            <div class="form-field">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="you@email.com" required>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Subject</label>
+            <input type="text" name="subject" placeholder="Project / Opportunity / Other" required>
+          </div>
+          <div class="form-field">
+            <label>Message</label>
+            <textarea name="message" rows="5" placeholder="What's on your mind?" required></textarea>
+          </div>
+          <button type="submit" class="btn-solid" style="width:100%;justify-content:center;" id="submitBtn">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-name">Ahsan Khan</span>
+    <span class="footer-copy">© 2025 — Karachi, Pakistan</span>
+  </footer>
+
+</div>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top  = mouseY + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  ring.style.left = ringX + 'px';
+  ring.style.top  = ringY + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .skill').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+});
+
+// Navbar scroll shadow
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
+});
+
+// Active nav link on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a:not(.nav-hire)');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id');
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+// Scroll fade in
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+
+// Form submit
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Sent ✓';
+  btn.style.opacity = '0.6';
+  setTimeout(() => {
+    btn.textContent = 'Send Message';
+    btn.style.opacity = '1';
+    e.target.reset();
+  }, 3000);
+}
+</script>
+</body>
+</html>
