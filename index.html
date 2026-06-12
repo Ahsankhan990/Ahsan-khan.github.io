@@ -119,7 +119,7 @@ nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
 .container { max-width: 780px; margin: 0 auto; padding: 0 28px; }
 
 /* HERO */
-.hero { padding: 140px 0 100px; border-bottom: 1px solid var(--grey-200); }
+.hero { padding: 100px 0 50px; border-bottom: 1px solid var(--grey-200); }
 .hero-eyebrow {
   font-family: var(--mono);
   font-size: 12px;
@@ -214,10 +214,14 @@ nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
 .meta-value { font-size: 14px; font-weight: 500; }
 
 /* SECTIONS */
-section { padding: 80px 0; border-bottom: 1px solid var(--grey-200); }
+section { padding: 30px 0; bottom: 1px solid var(--grey-200); }
+
+
 .section-header {
   display: flex; align-items: baseline;
   gap: 16px; margin-bottom: 48px;
+ 
+
 }
 .section-num { font-family: var(--mono); font-size: 11px; color: var(--grey-400); }
 .section-title { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px; }
@@ -227,9 +231,10 @@ section { padding: 80px 0; border-bottom: 1px solid var(--grey-200); }
   font-size: 1rem; color: var(--grey-600);
   line-height: 1.85; font-weight: 300;
   max-width: 600px; margin-bottom: 1.5rem;
+  
 }
 .about-text strong { color: var(--black); font-weight: 500; }
-.skills-block { margin-top: 2.5rem; }
+.skills-block { margin-top: 2.5rem; border-bottom: 1px solid var(--grey-200);}
 .skills-group { margin-bottom: 20px; }
 .skills-label {
   font-family: var(--mono); font-size: 10px;
@@ -297,8 +302,8 @@ section { padding: 80px 0; border-bottom: 1px solid var(--grey-200); }
 .edu-list { display: flex; flex-direction: column; }
 .edu-item {
   display: grid; grid-template-columns: 110px 1fr;
-  gap: 2rem; padding: 28px 0;
-  border-top: 1px solid var(--grey-200);
+  gap: 2rem; padding: 10px 0;
+
 }
 .edu-item:last-child { border-bottom: 1px solid var(--grey-200); }
 .edu-date { font-family: var(--mono); font-size: 12px; color: var(--grey-400); padding-top: 3px; }
@@ -425,6 +430,17 @@ footer {
     border-radius: 0 !important;
   }
 }
+
+#typewriter::after {
+  content: '|';
+  animation: blink 0.7s step-end infinite;
+  color: var(--grey-400);
+  margin-left: 2px;
+}
+#line1, #line2 {
+  color: var(--grey-400);
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 </style>
 </head>
 <body>
@@ -453,7 +469,7 @@ footer {
   <!-- HERO -->
   <div class="hero">
     <div class="hero-eyebrow"><span class="status-dot"></span> Open to work — Karachi, Pakistan</div>
-    <h1>Ahsan Khan.<br><em>Python & Flask</em><br><em>Developer.</em></h1>
+    <h1>Ahsan Khan.<br><span id="line1"></span><br><span id="line2"></span></h1>
     <p class="hero-desc">Final year BSCS student focused on developing real-world Python applications, including AI-based systems, web backends, and scalable software solutions. 
     <div class="hero-actions">
   <a href="#projects" class="btn-solid">View Projects</a>
@@ -483,7 +499,7 @@ footer {
 
   <!-- ABOUT -->
   <section id="about">
-    <div class="section-header fade">
+    <div class="section-header fade" style=" padding-bottom: 35px;  border-bottom: 1px solid var(--grey-200);">
       <span class="section-num">01</span>
       <h2 class="section-title">About</h2>
     </div>
@@ -610,7 +626,7 @@ footer {
 
   <!-- EDUCATION -->
   <section id="education">
-    <div class="section-header fade">
+    <div class="section-header fade" style=" padding-bottom: 38px;  border-bottom: 1px solid var(--grey-200);">
       <span class="section-num">03</span>
       <h2 class="section-title">Education</h2>
     </div>
@@ -642,7 +658,7 @@ footer {
 
   <!-- CONTACT -->
   <section id="contact">
-    <div class="section-header fade">
+    <div class="section-header fade" style=" padding-bottom: 33px;  border-bottom: 1px solid var(--grey-200);">
       <span class="section-num">04</span>
       <h2 class="section-title">Contact</h2>
     </div>
@@ -801,6 +817,36 @@ function handleSubmit(e) {
     e.target.reset();
   }, 3000);
 }
+
+// Typewriter effect
+const line1text = "Python & Flask";
+const line2text = "Developer.";
+let charIndex = 0;
+const line1El = document.getElementById('line1');
+const line2El = document.getElementById('line2');
+
+function typeLine1() {
+  if (charIndex < line1text.length) {
+    line1El.textContent += line1text.charAt(charIndex);
+    charIndex++;
+    setTimeout(typeLine1, 80);
+  } else {
+    charIndex = 0;
+    setTimeout(typeLine2, 200);
+  }
+}
+
+function typeLine2() {
+  if (charIndex < line2text.length) {
+    line2El.textContent += line2text.charAt(charIndex);
+    charIndex++;
+    setTimeout(typeLine2, 80);
+  }
+}
+
+setTimeout(typeLine1, 800);
+
+setTimeout(type, 800);
 </script>
 </body>
 </html>
