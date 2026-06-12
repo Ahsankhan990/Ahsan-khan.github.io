@@ -374,6 +374,57 @@ footer {
   body { cursor: auto; }
   .cursor, .cursor-ring { display: none; }
 }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 101;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--black);
+  transition: all 0.3s ease;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+@media (max-width: 640px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 56px; left: 0; right: 0;
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(12px);
+    flex-direction: column;
+    padding: 20px 28px 28px;
+    gap: 0;
+    border-bottom: 1px solid var(--grey-200);
+    z-index: 100;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { border-bottom: 1px solid var(--grey-200); }
+  .nav-links li:last-child { border-bottom: none; }
+  .nav-links a {
+    display: block;
+    padding: 14px 0;
+    font-size: 15px;
+    color: var(--black);
+  }
+  .nav-hire {
+    background: none !important;
+    color: var(--black) !important;
+    padding: 14px 0 !important;
+    border-radius: 0 !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -384,12 +435,17 @@ footer {
 <!-- NAV -->
 <nav id="navbar">
   <a href="#" class="nav-logo">Portfolio</a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#education">Education</a></li>
-    <li><a href="#contact" class="nav-hire">Contact</a></li>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" onclick="closeMenu()">About</a></li>
+    <li><a href="#projects" onclick="closeMenu()">Projects</a></li>
+    <li><a href="#education" onclick="closeMenu()">Education</a></li>
+    <li><a href="#contact" class="nav-hire" onclick="closeMenu()">Contact</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </nav>
 
 <div class="container">
@@ -400,10 +456,15 @@ footer {
     <h1>Ahsan Khan.<br><em>Python & Flask</em><br><em>Developer.</em></h1>
     <p class="hero-desc">Final year BSCS student focused on developing real-world Python applications, including AI-based systems, web backends, and scalable software solutions. 
     <div class="hero-actions">
-      <a href="#projects" class="btn-solid">View Projects</a>
-      <a href="https://github.com/Ahsankhan990" target="_blank" class="btn-outline">GitHub</a>
-      <a href="#contact" class="btn-outline">Contact Me</a>
-    </div>
+  <a href="#projects" class="btn-solid">View Projects</a>
+  <a href="AhsanKhan_CV.pdf" download="AhsanKhan_CV.pdf" class="btn-outline">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download CV
+  </a>
+  <a href="https://github.com/Ahsankhan990" target="_blank" class="btn-outline">GitHub</a>
+  <a href="#contact" class="btn-outline">Contact Me</a>
+</div>
+    
     <div class="hero-meta">
       <div class="meta-item">
         <span class="meta-label">Degree</span>
@@ -718,6 +779,15 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
 
 // Form submit
 function handleSubmit(e) {
